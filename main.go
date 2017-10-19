@@ -114,7 +114,10 @@ func list(args []string, fHistAbsDir string) error {
 		if err != nil {
 			continue
 		}
-		relPaths = append(relPaths, "./"+relPath)
+		if relPath != "." {
+			relPath = "./" + relPath
+		}
+		relPaths = append(relPaths, relPath)
 	}
 	var output string
 	for _, p := range relPaths {
