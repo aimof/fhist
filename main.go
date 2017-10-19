@@ -106,8 +106,19 @@ func list(args []string, fHistAbsDir string) error {
 		if err != nil {
 			return err
 		}
+		isDuplicate := false
+		for _, p := range absPaths {
+			if absTarget == p {
+				isDuplicate = true
+				break
+			}
+		}
+		if isDuplicate {
+			continue
+		}
+		absPaths = append(absPaths, absTarget)
+
 		if !strings.Contains(absTarget, wd) {
-			absPaths = append(absPaths, absTarget)
 			continue
 		}
 		relPath, err := filepath.Rel(wd, scanner.Text())
@@ -120,11 +131,11 @@ func list(args []string, fHistAbsDir string) error {
 		relPaths = append(relPaths, relPath)
 	}
 	var output string
-	for _, p := range relPaths {
-		output = output + p + "\n"
+	for i := len(absPaths) - 1; i >= 0; i-- {
+		output = output + relPaths[i] + "\n"
 	}
-	for _, p := range absPaths {
-		output = output + p + "\n"
+	for i := len(absPaths) - 1; i >= 0; i-- {
+		output = output + absPaths[i] + "\n"
 	}
 	fmt.Print(output)
 	return nil
