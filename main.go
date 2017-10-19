@@ -97,6 +97,9 @@ func list(args []string, fHistAbsDir string) error {
 		return err
 	}
 
+	absPaths := make([]string, 0)
+	relPaths := make([]string, 0)
+
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		absTarget, err := filepath.Abs(scanner.Text())
@@ -104,15 +107,23 @@ func list(args []string, fHistAbsDir string) error {
 			return err
 		}
 		if !strings.Contains(absTarget, wd) {
-			fmt.Println(absTarget)
+			absPaths = append(absPaths, absTarget)
 			continue
 		}
 		relPath, err := filepath.Rel(wd, scanner.Text())
 		if err != nil {
 			continue
 		}
-		fmt.Println(relPath)
+		relPaths = append(relPaths, "./"+relPath)
 	}
+	var output string
+	for _, p := range relPaths {
+		output = output + p + "\n"
+	}
+	for _, p := range absPaths {
+		output = output + p + "\n"
+	}
+	fmt.Print(output)
 	return nil
 }
 
